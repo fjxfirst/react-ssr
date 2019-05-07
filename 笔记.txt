@@ -1,0 +1,12 @@
+一、使用nodemon监听js文件的变化，实现服务自动重启
+npm install nodemon -g
+在package.json中配置命令"start":"nodemon --watch build --exec node \"./build/bundle.js\"",
+表示监听build目录中的文件，如果build中的文件有变化则重新执行bundle.js,因为外层已经包裹了一次",所以\"表示转义
+使用webpack的--watch参数，"build": "webpack --config webpack.server.js --watch"
+这样先执行npm run build,再执行npm start就实现了服务自动重启
+二、npm-run-all提示开发效率
+npm install npm-run-all
+"dev":"npm-run-all --parallel dev:**", 表示并行执行以dev开头的命令，
+"dev:start":"nodemon --watch build --exec node \"./build/bundle.js\"",
+"dev:build": "webpack --config webpack.server.js --watch"
+这样在开发时只需要执行npm run dev即可
