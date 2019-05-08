@@ -6,6 +6,7 @@ import {renderToString} from 'react-dom/server'
 import Home from './containers/Home'
 
 const app = express();
+app.use(express.static('public'))//设置静态资源路径，
 //服务端渲染就需要react-dom/server提供的renderToString方法
 const content = renderToString(<Home/>)
 app.get('/', function (req, res) {
@@ -15,8 +16,11 @@ app.get('/', function (req, res) {
         <title>ssr</title>
       </head>
       <body>
-        ${content}
-        你好6667
+        <div id="root">
+          ${content}
+          你好6667
+        </div>
+        <script src="/index.js"></script>
       </body>
     </html>
     `
