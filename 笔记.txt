@@ -10,3 +10,4 @@ npm install npm-run-all
 "dev:start":"nodemon --watch build --exec node \"./build/bundle.js\"",
 "dev:build": "webpack --config webpack.server.js --watch"
 这样在开发时只需要执行npm run dev即可
+三、在服务器端要使用React.hydrate，而不能使用render
