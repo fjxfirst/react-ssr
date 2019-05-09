@@ -107,3 +107,50 @@ const instance =axios.create({
   baseURL:'https://api.douban.com' //对于服务器端
 })
 export default instance
+十二、巧用redux-thunk中的withExtraArgument
+使用thunk.withExtraArgument直接将对应的axiosInstance带入action中
+export const getClientStore=()=>{
+  //保证服务端的初始数据和浏览器端的初始数据一致，作为reducer的初始默认数据
+  const defaultState = window.context.state //数据的脱水
+  //改变服务器端store的内容，那么就一定要使用clientAxios
+  return createStore(reducer,defaultState,applyMiddleware(thunk.withExtraArgument(clientAxios)))
+}
+这样就不需要store.dispatch(getHomeList(true))传入的布尔类型的判断参数了
+十三、使用renderRoutes方法实现对多级路由的支持
+当用户访问'/'路径时，能匹配出App和Home组件
+当用户访问'/login'路径时，能匹配出App和Login组件
+  {
+    path:'/',
+    component:App,
+    routes:[
+      {
+        path:'/',
+        component:Home,
+        exact:true,
+        //当加载Home组件之前会执行loadData方法
+        loadData:Home.loadData,
+        key:'home'
+      },
+      {
+        path:'/login',
+        component:Login,
+        exact:true,
+        key:'login'
+      }
+    ]
+  }
+但是多级路由就不能使用
+{routes.map(route => (
+ <Route {...route} />
+))}了，这里就要使用import {renderRoutes} from "react-router-config",{renderRoutes(routes)},但此时只会展示第一层路由
+还需要在App组件中使用
+            import {renderRoutes} from "react-router-config"
+            const App=()=>{
+              return (
+                <div>
+                  <Header/>
+                  {renderRoutes(props.route.routes)}
+                </div>
+              )
+            }
+再把Home和Login中的Header组件删除,同时client的路由也要使用{renderRoutes(props.route.routes)}
