@@ -47,3 +47,33 @@ const matchRoutes=[]
   当访问/ttt时，matchPath匹配不到/ttt，这里就要用到react-router-config
   安装react-router-config，npm install react-router-config --save
   使用react-router-config中的matchRoutes,就可以匹配多级路由
+八、首次渲染页面抖动问题，原因是服务端的store和浏览器端的store不一致，当服务端的store有数据后，浏览器端的js重新渲染时，它的store是空的，
+所以页面内容就会白屏闪一下。解决方法：
+数据的注水与脱水，这样首次渲染时store就一致了
+注水：将服务器端的state放到window.context中
+<html>
+      <head>
+        <title>ssr</title>
+      </head>
+      <body>
+        <div id="root">${content}</div>
+        <script>
+        window.context={
+          state: ${JSON.stringify(store.getState())}
+        }
+        </script>
+        <script src="/index.js"></script>
+      </body>
+</html>
+脱水：客户端使用的store初始数据之接从window.context中获取
+export const getClientStore=()=>{
+  //保证服务端的初始数据和浏览器端的初始数据一致，作为reducer的初始默认数据
+  const defaultState = window.context.state //数据的脱水
+  return createStore(reducer,defaultState,applyMiddleware(thunk))
+}
+首页组件的componentDidMount可以做优化处理，如果有数据了就不用发送请求
+componentDidMount() {
+    if(!this.props.list){
+      this.props.getHomeList()
+    }
+}
