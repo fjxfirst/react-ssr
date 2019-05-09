@@ -21,15 +21,14 @@ class Home extends Component {
   //componentDidMount在服务器端是不执行的
   componentDidMount() {
     if(!this.props.list.length){
-      console.log(1)
-      this.props.getHomeList()
+      this.props.getHomeList(false)
     }
   }
 }
 Home.loadData=(store)=>{
   //这个函数，负责在服务器端渲染之前，把这个路由需要的数据提前加载好
   //返回promise对象
-  return store.dispatch(getHomeList())
+  return store.dispatch(getHomeList(true))
 }
 export default connect(
   state => ({

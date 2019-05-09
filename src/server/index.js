@@ -36,18 +36,18 @@ app.get('*', function (req, res) {
         matchedRoutes.push(route)
       }
     });*/
-    /*const matchedRoutes = matchRoutes(routes, req.path)
+    const matchedRoutes = matchRoutes(routes, req.path)
     const promises = []
     matchedRoutes.forEach(item => {
       //这里是异步代码，有可能数据还没获取到，后面的代码就执行了
       if (item.route.loadData) {
         promises.push(item.route.loadData(store))
       }
-    })*/
+    })
     //当所有异步数据获取到后再去执行后面的代码
-    //Promise.all(promises).then(() => {
+    Promise.all(promises).then(() => {
       res.send(render(store, routes, req))
-    //}).catch(err => {console.log(err)})
+    }).catch(err => {console.log(err)})
   }
 );
 
