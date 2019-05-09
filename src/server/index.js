@@ -24,7 +24,7 @@ app.use('/api',proxy('https://api.douban.com', {
 
 
 app.get('*', function (req, res) {
-    const store = getStore()
+    const store = getStore(req)
     //如果在这里，能够拿到异步数据，并填充到store中
     //store里面到底填充什么，需要结合当前用户请求的地址和路由，做判断
     //如果用户访问/路径，就拿Home组件的异步数据

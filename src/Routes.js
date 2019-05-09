@@ -18,6 +18,7 @@ export default [
   {
     path:'/',
     component:App,
+    loadData:App.loadData,
     routes:[
       {
         path:'/',

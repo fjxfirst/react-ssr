@@ -1,15 +1,17 @@
 import {createStore,applyMiddleware,combineReducers} from 'redux'
 import thunk from 'redux-thunk'
 import {homeReducer} from '../containers/Home/store'
+import {headerReducer} from '../components/Header/store'
 import clientAxios from '../client/request'
 import serverAxios from '../server/request'
 const reducer= combineReducers({
-  home:homeReducer
+  home:homeReducer,
+  header:headerReducer
 })
 
-export const getStore=()=>{
+export const getStore=(req)=>{
   //改变服务器端store的内容，那么就一定要使用serverAxios
-  return createStore(reducer,applyMiddleware(thunk.withExtraArgument(serverAxios)))
+  return createStore(reducer,applyMiddleware(thunk.withExtraArgument(serverAxios(req))))
 }
 
 /*

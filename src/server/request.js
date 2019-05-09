@@ -1,5 +1,9 @@
 import axios from 'axios'
-const instance =axios.create({
-  baseURL:'https://api.douban.com' //对于服务器端
+
+const createInstance = (req) => axios.create({
+  baseURL: 'https://api.douban.com', //对于服务器端
+  headers: {
+    cookie: req.get('cookie') || ''
+  }
 })
-export default instance
+export default createInstance
