@@ -15,10 +15,6 @@ app.use('/api',proxy('https://api.douban.com', {
   proxyReqPathResolver: function (req) {
     console.log(req.url)
     return '/v2/movie/in_theaters?city=%E5%B9%BF%E5%B7%9E&start=0&count=10'
-    /*var parts = req.url.split('?');
-    var queryString = parts[1];
-    var updatedPath = parts[0].replace(/test/, 'tent');
-    return updatedPath + (queryString ? '?' + queryString : '');*/
   }
 }))
 
