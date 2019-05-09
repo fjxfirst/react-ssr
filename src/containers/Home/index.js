@@ -20,7 +20,8 @@ class Home extends Component {
   }
   //componentDidMount在服务器端是不执行的
   componentDidMount() {
-    if(!this.props.list){
+    if(!this.props.list.length){
+      console.log(1)
       this.props.getHomeList()
     }
   }

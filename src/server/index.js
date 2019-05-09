@@ -1,6 +1,7 @@
 //客户端渲染：React代码在浏览器上执行，消耗的是用户浏览器的性能
 //服务器端渲染：React代码在服务器上执行，消耗的是服务器端的性能
 import express from 'express'
+import proxy from 'express-http-proxy'
 import {render} from './utils'
 import {getStore}from "../store"
 import {renderToString} from "react-dom/server"
@@ -9,7 +10,18 @@ import routes from "../Routes"
 
 const app = express();
 app.use(express.static('public'))//设置静态资源路径，
-//服务端渲染就需要react-dom/server提供的renderToString方法
+
+app.use('/api',proxy('https://api.douban.com', {
+  proxyReqPathResolver: function (req) {
+    console.log(req.url)
+    return '/v2/movie/in_theaters?city=%E5%B9%BF%E5%B7%9E&start=0&count=10'
+    /*var parts = req.url.split('?');
+    var queryString = parts[1];
+    var updatedPath = parts[0].replace(/test/, 'tent');
+    return updatedPath + (queryString ? '?' + queryString : '');*/
+  }
+}))
+
 
 app.get('*', function (req, res) {
     const store = getStore()
@@ -24,18 +36,18 @@ app.get('*', function (req, res) {
         matchedRoutes.push(route)
       }
     });*/
-    const matchedRoutes = matchRoutes(routes, req.path)
+    /*const matchedRoutes = matchRoutes(routes, req.path)
     const promises = []
     matchedRoutes.forEach(item => {
       //这里是异步代码，有可能数据还没获取到，后面的代码就执行了
       if (item.route.loadData) {
         promises.push(item.route.loadData(store))
       }
-    })
+    })*/
     //当所有异步数据获取到后再去执行后面的代码
-    Promise.all(promises).then(() => {
+    //Promise.all(promises).then(() => {
       res.send(render(store, routes, req))
-    }).catch(err => {console.log(err)})
+    //}).catch(err => {console.log(err)})
   }
 );
 

@@ -77,3 +77,14 @@ componentDidMount() {
       this.props.getHomeList()
     }
 }
+九、node作为数据获取中间层
+axios.get('/api/v2/movie/in_theaters?city=%E5%B9%BF%E5%B7%9E&start=0&count=10')
+安装express-http-proxy
+import proxy from 'express-http-proxy'
+app.use('/api',proxy('https://api.douban.com', {
+  proxyReqPathResolver: function (req) {
+    console.log(req.url)
+    return '/v2/movie/in_theaters?city=%E5%B9%BF%E5%B7%9E&start=0&count=10'
+  }
+}))
+第一个参数'/api',表示接口地址匹配成功的话,会被转发到'https://api.douban.com/v2/movie/in_theaters?city=%E5%B9%BF%E5%B7%9E&start=0&count=10'
