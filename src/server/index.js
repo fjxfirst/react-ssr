@@ -36,7 +36,19 @@ app.get('*', function (req, res) {
     matchedRoutes.forEach(item => {
       //这里是异步代码，有可能数据还没获取到，后面的代码就执行了
       if (item.route.loadData) {
-        promises.push(item.route.loadData(store))
+        /**
+         * 一个页面要加载A,B,C,D四个组件，这四个组件都需要服务器端加载数据
+         * 假设A组件加载数据有误
+         * B,C,D组件有几种情况
+         * 1.B,C,D组件数据已经加载完成了
+         * 2.假设B,C,D接口比较慢，B,C,D组件数据没有加载完成
+         * 我们最终希望的结果是，不论慢或块，加载正确的正常显示，有误的不显示，
+         * 所以之前的Promise.all会有问题，所以需要在外面再包一层Promise
+         * */
+        const promise =new Promise((resolve,reject)=>{
+          item.route.loadData(store).then(resolve).catch(resolve)
+        })
+        promises.push(promise)
       }
     })
     //当所有异步数据获取到后再去执行后面的代码
