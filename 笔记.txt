@@ -225,4 +225,18 @@ if (item.route.loadData) {
         </html>
         `
         这样就解决了以上问题，实现了css样式的服务器端渲染
+十八、使用高阶组件
+目的是具备一些公共的特性，例如这里统一整合css样式
+export default (DecoratedComponent,styles) => {
+  //返回的叫做高阶组件
+  return class NewComponent extends Component{
+    componentWillMount(){
+      const {staticContext}=this.props
+      staticContext&&(staticContext.css.push(styles._getCss()))
+    }
+    render(){
+      return    <DecoratedComponent {...this.props}/>
+    }
+  }
+}
 

@@ -2,19 +2,20 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {getHomeList} from "./store/actions"
 import styles from './style.css'
+import withStyles from '../../withStyle'
 class Home extends Component {
-  componentWillMount(){
+  /*componentWillMount(){
     const {staticContext}=this.props
     staticContext&&(staticContext.css.push(styles._getCss()))
-  }
+  }*/
   render() {
     const {name,list}=this.props
     return (
-      <div>
+      <div className={styles.container}>
         <div>{name}</div>
         {
           list.map(item=>{
-            return <div key={item.id}>{item.title}</div>
+            return <div key={item.id} className={styles.item}>{item.title}</div>
           })
         }
       </div>
@@ -43,7 +44,7 @@ const ExportHome = connect(
       dispatch(getHomeList())
     }
   })
-)(Home)
+)(withStyles(Home,styles))
 
 ExportHome.loadData=(store)=>{//消除loadData潜在的问题
   return store.dispatch(getHomeList())
