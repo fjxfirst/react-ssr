@@ -1,5 +1,6 @@
-import React, {Component} from 'react'
+import React, {Component,Fragment} from 'react'
 import {connect} from 'react-redux'
+import {Helmet} from 'react-helmet'
 import {getHomeList} from "./store/actions"
 import styles from './style.css'
 import withStyles from '../../withStyle'
@@ -11,14 +12,20 @@ class Home extends Component {
   render() {
     const {name,list}=this.props
     return (
-      <div className={styles.container}>
-        <div>{name}</div>
-        {
-          list.map(item=>{
-            return <div key={item.id} className={styles.item}>{item.title}</div>
-          })
-        }
-      </div>
+      <Fragment>
+        <Helmet>
+          <title>这是feng的ssr介绍页面，很丰富</title>
+          <meta name="description" content="这是feng的ssr介绍页面，很丰富"/>
+        </Helmet>
+        <div className={styles.container}>
+          <div>{name}</div>
+          {
+            list.map(item=>{
+              return <div key={item.id} className={styles.item}>{item.title}</div>
+            })
+          }
+        </div>
+      </Fragment>
     )
   }
   //componentDidMount在服务器端是不执行的

@@ -239,4 +239,26 @@ export default (DecoratedComponent,styles) => {
     }
   }
 }
-
+十九、SEO相关
+title和description：
+基于全文的搜索引擎title和description对排名的影响已经非常小了，只写title和description对SEO的影响非常小
+搜索到的标题由title决定，旁边的描述由description决定
+文字，链接，多媒体
+二十、React-Helmet的使用
+安装npm install react-helmet --save
+import {Helmet} from 'react-helmet'
+使用 <Helmet>
+            <title>这是feng的ssr介绍页面，很丰富</title>
+            <meta name="description" content="这是feng的ssr介绍页面，很丰富"/>
+     </Helmet>
+ 但是只对客户端渲染有效,还需要在服务器端进行渲染
+ import {Helmet} from 'react-helmet'
+ const helmet = Helmet.renderStatic()
+       <head>
+          ${helmet.title.toString()}
+          ${helmet.meta.toString()}
+         <style>${cssStr}</style>
+       </head>
+二十一、预渲染，使用场景：当对首屏渲染速度并不高时，但是却要提供seo排名的这种情况,针对单纯的React的spa项目
+使用prerender
+https://prerender
