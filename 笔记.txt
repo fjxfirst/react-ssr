@@ -17,15 +17,8 @@ npm install npm-run-all
       </StaticRouter>
 StaticRouter无法感知到地址路径的变化，所以需要location参数，context是通信数据的获取，用来做数据的传递
 五、使用redux
-六、react生命周期函数不会在服务端执行,需要使用matchPath，
-const matchRoutes=[]
-  routes.some(route => { //遍历routes中的每一条路由
-    //如果当前请求的路径和route中的路由能匹配上，match就为true
-    const match = matchPath(req.path, route);
-    if (match){
-      matchRoutes.push(route)
-    }
-  });
+六、componentDidMount()不会在服务端执行
+
 这里可能会出现多余的一个空数组，原因是请求favicon.ico造成的，解决办法是把favicon.ico文件放入public目录下
 七、多层路由问题
   {
@@ -154,3 +147,25 @@ export const getClientStore=()=>{
               )
             }
 再把Home和Login中的Header组件删除,同时client的路由也要使用{renderRoutes(props.route.routes)}
+
+十四、解决404页返回码功能
+  使用<StaticRouter location={req.path} context={{}}>
+              <div>
+                {renderRoutes(routes)}
+              </div>
+            </StaticRouter>
+  中的context属性，context={{name:'feng'}},在子组件中使用this.props.staticContext来获取，但是staticContext只有服务器端渲染时才会传递进来，
+  所以需要判断 if(this.props.staticContext){
+              this.props.staticContext.NOT_FOUND = true
+            }
+十五、实现服务器端301重定向
+react-router-dom中的Redirect只适用于客户端做重定向，无法实现服务端做重定向，
+当遇到Redirect时,会自动的往<StaticRouter location={req.path} context={{}}>的context中添加相关的对象{ action: 'REPLACE',
+                                                                                   location: { pathname: '/', search: '', hash: '', state: undefined },
+                                                                                   url: '/' }
+if (context.action === 'REPLACE') {//判断是否为重定向
+        res.redirect(301, context.url)
+}
+需要结合StaticRouter,renderRoutes，主要是StaticRouter会注入相关的内容
+
+

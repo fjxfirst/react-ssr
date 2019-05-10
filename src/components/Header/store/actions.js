@@ -44,7 +44,6 @@ export const getHeaderInfo=()=>{
       resolve(state.header.login)
     })
       .then(res=>{
-        console.log(res)
         dispatch(changeLogin(res))
       })
   }

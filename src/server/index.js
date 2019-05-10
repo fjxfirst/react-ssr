@@ -3,7 +3,7 @@
 import express from 'express'
 import proxy from 'express-http-proxy'
 import {render} from './utils'
-import {getStore}from "../store"
+import {getStore} from "../store"
 import {renderToString} from "react-dom/server"
 import {matchRoutes} from "react-router-config"
 import routes from "../Routes"
@@ -11,9 +11,8 @@ import routes from "../Routes"
 const app = express();
 app.use(express.static('public'))//设置静态资源路径，
 
-app.use('/api',proxy('https://api.douban.com', {
+app.use('/api', proxy('https://api.douban.com', {
   proxyReqPathResolver: function (req) {
-    console.log(req.url)
     return '/v2/movie/in_theaters?city=%E5%B9%BF%E5%B7%9E&start=0&count=10'
   }
 }))
@@ -42,7 +41,16 @@ app.get('*', function (req, res) {
     })
     //当所有异步数据获取到后再去执行后面的代码
     Promise.all(promises).then(() => {
-      res.send(render(store, routes, req))
+      const context = {}
+      const html = render(store, routes, req, context)
+      if (context.action === 'REPLACE') {//判断是否为重定向
+        res.redirect(301, context.url)
+      } else if (context.NOT_FOUND) {//如果为true说明为404页面
+        res.status(404)
+        res.send(html)
+      } else {
+        res.send(html)
+      }
     }).catch(err => {console.log(err)})
   }
 );
