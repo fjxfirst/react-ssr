@@ -1,8 +1,12 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {getHomeList} from "./store/actions"
-
+import styles from './style.css'
 class Home extends Component {
+  componentWillMount(){
+    const {staticContext}=this.props
+    staticContext&&(staticContext.css.push(styles._getCss()))
+  }
   render() {
     const {name,list}=this.props
     return (
@@ -28,7 +32,8 @@ Home.loadData=(store)=>{
   //返回promise对象
   return store.dispatch(getHomeList())
 }
-export default connect(
+
+const ExportHome = connect(
   state => ({
     list:state.home.list,
     name: state.home.name
@@ -39,3 +44,8 @@ export default connect(
     }
   })
 )(Home)
+
+ExportHome.loadData=(store)=>{//消除loadData潜在的问题
+  return store.dispatch(getHomeList())
+}
+export default ExportHome

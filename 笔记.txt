@@ -186,3 +186,43 @@ if (item.route.loadData) {
         promises.push(promise)
 }
 这样做是比较好的容错机制
+十七、服务端渲染对css样式的支持
+    在使用style-loader、css-loader时，服务器端会报错，style-loader需要往页面挂载style,因为服务器端并没有window对象
+    需要用到isomorphic-style-loader,但页面仍然有白屏抖动问题，并且浏览器禁用JavaScript时根本连样式都没有了。说明服务器端渲染时，样式并没有渲染出来。
+    原因分析，isomorphic-style-loader和style-loader都会往标签上添加class类名，但是isomorphic-style-loader并没有往<header>中加入<style>,
+    其次，服务器端和客户端import styles from './style.css'得到的styles是不一样的，服务器端产生的styles中有_getCss（）等方法可以调用，而客户端的却没有。
+    我们可以利用this.props.staticContext判断是服务器端还是客户端渲染，如果staticContext为undefined，那就是客户端渲染。要注意的是staticContext不能
+    跨组件获取，例如
+    <Provider store={store}>
+          <StaticRouter location={req.path} context={context}>
+            <div>
+              {renderRoutes(routes)}
+            </div>
+          </StaticRouter>
+    </Provider>，假如现在渲染的routes中是<App>,那么<App>中的<Header>组件里是不能获取到this.props.staticContext的，但是在<App>中是可以的，所以不能跨组件。
+    所以
+    componentWillMount(){
+        const {staticContext}=this.props
+        staticContext&&(staticContext.css=styles._getCss())
+    }
+    那么context.css就可以获取到样式，
+    const cssStr = context.css
+      return `
+        <html>
+          <head>
+            <title>ssr</title>
+            <style>${cssStr}</style>
+          </head>
+          <body>
+            <div id="root">${content}</div>
+            <script>
+            window.context={
+              state: ${JSON.stringify(store.getState())}
+            }
+            </script>
+            <script src="/index.js"></script>
+          </body>
+        </html>
+        `
+        这样就解决了以上问题，实现了css样式的服务器端渲染
+

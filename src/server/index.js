@@ -25,7 +25,7 @@ app.get('*', function (req, res) {
     //如果用户访问/路径，就拿Home组件的异步数据
     //如果用户访问/login路径，就拿Login组件的异步数据
     /*routes.some(route => { //遍历routes中的每一条路由
-      //如果当前请求的路径和route中的路由能匹配上，match就为true
+      //如果当前请求的路径和route中的路由能匹配上，match就为true,要使用react-router-dom中的matchPath
       const match = matchPath(req.path, route);
       if (match){
         matchedRoutes.push(route)
@@ -53,7 +53,9 @@ app.get('*', function (req, res) {
     })
     //当所有异步数据获取到后再去执行后面的代码
     Promise.all(promises).then(() => {
-      const context = {}
+      const context = {
+        css:[]//多组件样式整合
+      }
       const html = render(store, routes, req, context)
       if (context.action === 'REPLACE') {//判断是否为重定向
         res.redirect(301, context.url)

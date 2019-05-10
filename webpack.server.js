@@ -11,6 +11,20 @@ module.exports = merge(webpackConfig,{
     filename: "bundle.js",
     path: path.resolve(__dirname, 'build')
   },
-  externals: [nodeExternals()]//这样配置的话，例如引入require('express')，express在node_modules里，它不会被打包进文件中，会保留原有的引入形式
-
+  externals: [nodeExternals()],//这样配置的话，例如引入require('express')，express在node_modules里，它不会被打包进文件中，会保留原有的引入形式
+  module: {
+    rules: [
+      {
+        test:/\.css$/,
+        use: ['isomorphic-style-loader',{
+          loader: "css-loader",
+          options: {
+            importLoaders:1,
+            modules:true,
+            localIdentName:'[name]_[local]_[hash:base64:5]'
+          }
+        }]
+      }
+    ]
+  }
 })

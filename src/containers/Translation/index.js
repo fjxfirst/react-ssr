@@ -1,8 +1,12 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {Redirect} from 'react-router-dom'
+import {getTranslationList} from './store/actions'
 
 class Translation extends Component {
+  componentDidMount(){
+    this.props.getTranslationList()
+  }
   render() {
     const {list, login} = this.props
     if(login){
@@ -16,11 +20,19 @@ class Translation extends Component {
     }
   }
 }
-
-export default connect(
+Translation.loadData=(store)=>{
+  return store.dispatch(getTranslationList())
+}
+const ExportTranslation = connect(
   state => ({
     list: state.translation.list,
     login: state.header.login
   }),
-  null
+  dispatch=>({
+    getTranslationList(){
+      dispatch(getTranslationList())
+    }
+  })
 )(Translation)
+
+export default ExportTranslation
