@@ -108,7 +108,17 @@ export const getClientStore=()=>{
   //改变服务器端store的内容，那么就一定要使用clientAxios
   return createStore(reducer,defaultState,applyMiddleware(thunk.withExtraArgument(clientAxios)))
 }
-这样就不需要store.dispatch(getHomeList(true))传入的布尔类型的判断参数了
+这样就不需要store.dispatch(getHomeList(true))传入的布尔类型的判断参数了，在action中通过第三个参数axiosInstance获取
+export const getHomeList=()=>{
+  return (dispatch,getState,axiosInstance)=>{
+    //返回promise对象
+    return axiosInstance.get('/v2/movie/in_theaters?city=%E5%B9%BF%E5%B7%9E&start=0&count=10')
+      .then(res=>{
+        const list = res.data.subjects
+        dispatch(changeHomeList(list))
+      })
+  }
+}
 十三、使用renderRoutes方法实现对多级路由的支持
 当用户访问'/'路径时，能匹配出App和Home组件
 当用户访问'/login'路径时，能匹配出App和Login组件
